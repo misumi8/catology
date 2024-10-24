@@ -1,0 +1,145 @@
+
+Breed: Bengal
+
+Value : Count
+Ext
+0    114
+1     59
+2     53
+3     13
+Name: count, dtype: int64
+
+Obs
+1     16
+2    165
+3     58
+Name: count, dtype: int64
+
+Calm
+1    52
+2    73
+3    46
+4    54
+5    14
+Name: count, dtype: int64
+
+Afraid
+1    93
+2    54
+3    67
+4    17
+5     8
+Name: count, dtype: int64
+
+Intelligent
+1      2
+2     10
+3     13
+4     82
+5    132
+Name: count, dtype: int64
+
+Vigilant
+1     8
+2    21
+3    34
+4    91
+5    85
+Name: count, dtype: int64
+
+Persevering
+1      6
+2      6
+3     25
+4     89
+5    113
+Name: count, dtype: int64
+
+Affectionate
+1      7
+2     21
+3     30
+4     78
+5    103
+Name: count, dtype: int64
+
+Friendly
+1    13
+2    29
+3    46
+4    99
+5    52
+Name: count, dtype: int64
+
+Solitary
+1    82
+2    67
+3    44
+4    36
+5    10
+Name: count, dtype: int64
+
+Brutal
+1    88
+2    54
+3    56
+4    37
+5     4
+Name: count, dtype: int64
+
+Dominant
+1    41
+2    45
+3    61
+4    67
+5    25
+Name: count, dtype: int64
+
+Aggressive
+1    79
+2    47
+3    70
+4    31
+5    12
+Name: count, dtype: int64
+
+Impulsive
+1    51
+2    45
+3    45
+4    74
+5    24
+Name: count, dtype: int64
+
+Predictable
+1     12
+2     29
+3     66
+4    109
+5     23
+Name: count, dtype: int64
+
+Distracted
+1    31
+2    35
+3    55
+4    85
+5    33
+Name: count, dtype: int64
+
+PredBird
+0    210
+1     23
+2      3
+3      2
+4      1
+Name: count, dtype: int64
+
+PredMamm
+0    197
+1     18
+2      9
+3      8
+4      7
+Name: count, dtype: int64
+

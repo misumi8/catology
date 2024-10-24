@@ -1,0 +1,147 @@
+
+Breed: European Shorthair
+
+Value : Count
+Ext
+0    314
+1    167
+2    311
+3    210
+4     20
+Name: count, dtype: int64
+
+Obs
+0      2
+1    118
+2    637
+3    265
+Name: count, dtype: int64
+
+Calm
+1     75
+2    182
+3    180
+4    375
+5    210
+Name: count, dtype: int64
+
+Afraid
+1    274
+2    214
+3    263
+4    178
+5     93
+Name: count, dtype: int64
+
+Intelligent
+1     22
+2     47
+3    118
+4    417
+5    418
+Name: count, dtype: int64
+
+Vigilant
+1     36
+2     61
+3    139
+4    403
+5    383
+Name: count, dtype: int64
+
+Persevering
+1     35
+2     79
+3    192
+4    364
+5    352
+Name: count, dtype: int64
+
+Affectionate
+1     29
+2     65
+3    122
+4    326
+5    480
+Name: count, dtype: int64
+
+Friendly
+1    149
+2    200
+3    175
+4    312
+5    186
+Name: count, dtype: int64
+
+Solitary
+1    187
+2    259
+3    213
+4    276
+5     87
+Name: count, dtype: int64
+
+Brutal
+1    539
+2    191
+3    150
+4    102
+5     40
+Name: count, dtype: int64
+
+Dominant
+1    304
+2    176
+3    254
+4    195
+5     93
+Name: count, dtype: int64
+
+Aggressive
+1    318
+2    194
+3    298
+4    134
+5     78
+Name: count, dtype: int64
+
+Impulsive
+1    280
+2    212
+3    246
+4    210
+5     74
+Name: count, dtype: int64
+
+Predictable
+1    101
+2    128
+3    260
+4    392
+5    141
+Name: count, dtype: int64
+
+Distracted
+1    166
+2    180
+3    292
+4    274
+5    110
+Name: count, dtype: int64
+
+PredBird
+0    605
+1    217
+2    113
+3     60
+4     27
+Name: count, dtype: int64
+
+PredMamm
+0    566
+1    166
+2     98
+3     92
+4    100
+Name: count, dtype: int64
+

@@ -1,0 +1,142 @@
+
+Breed: Turkish Van
+
+Value : Count
+Ext
+0    12
+1     5
+2     8
+3     3
+Name: count, dtype: int64
+
+Obs
+0     1
+1     3
+2    16
+3     8
+Name: count, dtype: int64
+
+Calm
+1     2
+2     2
+3     4
+4    16
+5     4
+Name: count, dtype: int64
+
+Afraid
+1    9
+2    8
+3    3
+4    4
+5    4
+Name: count, dtype: int64
+
+Intelligent
+1     3
+3     2
+4     9
+5    14
+Name: count, dtype: int64
+
+Vigilant
+1     3
+3     2
+4    10
+5    13
+Name: count, dtype: int64
+
+Persevering
+1     2
+2     2
+3     1
+4    13
+5    10
+Name: count, dtype: int64
+
+Affectionate
+1     2
+3     2
+4     9
+5    15
+Name: count, dtype: int64
+
+Friendly
+1    5
+2    1
+3    6
+4    9
+5    7
+Name: count, dtype: int64
+
+Solitary
+1    7
+2    6
+3    9
+4    5
+5    1
+Name: count, dtype: int64
+
+Brutal
+1    18
+2     4
+3     2
+4     2
+5     2
+Name: count, dtype: int64
+
+Dominant
+1    8
+2    5
+3    7
+4    7
+5    1
+Name: count, dtype: int64
+
+Aggressive
+1    9
+2    6
+3    9
+4    2
+5    2
+Name: count, dtype: int64
+
+Impulsive
+1    9
+2    6
+3    6
+4    6
+5    1
+Name: count, dtype: int64
+
+Predictable
+1     3
+2     1
+3     8
+4    12
+5     4
+Name: count, dtype: int64
+
+Distracted
+1     5
+2     7
+3    10
+4     4
+5     2
+Name: count, dtype: int64
+
+PredBird
+0    18
+1     5
+2     2
+3     2
+4     1
+Name: count, dtype: int64
+
+PredMamm
+0    17
+1     7
+2     2
+4     2
+Name: count, dtype: int64
+
