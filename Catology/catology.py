@@ -40,42 +40,42 @@ def display_distinct_values_breed(df, breed_column):
 
 
 
-def analyze_breed_attributes(file_path):
-    df = pd.read_excel(file_path)
-    label_encoder = LabelEncoder()
-    df['Breed_encoded'] = label_encoder.fit_transform(df['Breed'])
-
-    X = df.drop(columns=['Breed', 'Breed_encoded', 'ID'])
-    y = df['Breed_encoded']
-
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-    model = RandomForestClassifier(n_estimators=100, random_state=42)
-    model.fit(X_train, y_train)
-
-    y_pred = model.predict(X_test)
-
-    breed_mapping = dict(zip(df['Breed_encoded'], df['Breed']))
-
-    print("Classification report for each breed:")
-    print(classification_report(y_test, y_pred, target_names=[breed_mapping[b] for b in set(y)]))
-
-    print("\nFeature importance for predicting each breed:")
-    for breed_encoded in set(y):
-        breed_name = breed_mapping[breed_encoded]
-        print(f"\nBreed: {breed_name}")
-
-        breed_samples_idx = (y_test == breed_encoded)
-        
-        if breed_samples_idx.sum() > 0:
-            importances_for_breed = model.feature_importances_
-            
-            feature_importance = pd.DataFrame({
-                'Feature': X.columns,
-                'Importance': importances_for_breed
-            }).sort_values(by='Importance', ascending=False)
-
-            print(feature_importance.head(5))  # Show top 5 most important attributes for this breed
+# def analyze_breed_attributes(file_path):
+#     df = pd.read_excel(file_path)
+#     label_encoder = LabelEncoder()
+#     df['Breed_encoded'] = label_encoder.fit_transform(df['Breed'])
+#
+#     X = df.drop(columns=['Breed', 'Breed_encoded', 'ID'])
+#     y = df['Breed_encoded']
+#
+#     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+#
+#     model = RandomForestClassifier(n_estimators=100, random_state=42)
+#     model.fit(X_train, y_train)
+#
+#     y_pred = model.predict(X_test)
+#
+#     breed_mapping = dict(zip(df['Breed_encoded'], df['Breed']))
+#
+#     print("Classification report for each breed:")
+#     print(classification_report(y_test, y_pred, target_names=[breed_mapping[b] for b in set(y)]))
+#
+#     print("\nFeature importance for predicting each breed:")
+#     for breed_encoded in set(y):
+#         breed_name = breed_mapping[breed_encoded]
+#         print(f"\nBreed: {breed_name}")
+#
+#         breed_samples_idx = (y_test == breed_encoded)
+#
+#         if breed_samples_idx.sum() > 0:
+#             importances_for_breed = model.feature_importances_
+#
+#             feature_importance = pd.DataFrame({
+#                 'Feature': X.columns,
+#                 'Importance': importances_for_breed
+#             }).sort_values(by='Importance', ascending=False)
+#
+#             print(feature_importance.head(5))  # Show top 5 most important attributes for this breed
 
 
 def compute_feature_importance_for_breeds(df):
@@ -90,7 +90,8 @@ def compute_feature_importance_for_breeds(df):
     for breed in df['breed_encoded'].unique():
         y = (df['breed_encoded'] == breed).astype(int)  # 1 for current breed, 0 for others
 
-        clf = DecisionTreeClassifier(random_state=0)
+        clf = DecisionTreeClassifier(criterion='entropy', random_state=0)
+        # clf = DecisionTreeClassifier(random_state=0)
         clf.fit(X, y)
 
         feature_importance = pd.DataFrame({
@@ -233,7 +234,6 @@ def interpret_errors(errors_report, df):
             for column in missing_values.index:
                 if column in df.columns[2:]:
                     missing_rows = df[df[column].isnull()].index.tolist()
-                    adjusted_missing_rows = [row + 2 for row in missing_rows]
                     for row in missing_rows:
                         breed = df.loc[row, 'Breed']
                         same_breed_rows = df[df['Breed'] == breed]

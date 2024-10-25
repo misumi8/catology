@@ -1,8 +1,8 @@
 import pandas as pd
 from catology import *
 
-df = pd.read_excel('main.xlsx')
-# df = pd.read_excel('wrongdata.xlsx')
+# df = pd.read_excel('main.xlsx')
+df = pd.read_excel('wrongdata.xlsx')
 breed_column = 'Breed'
 
 while(True):
