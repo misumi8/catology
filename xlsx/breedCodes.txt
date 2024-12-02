@@ -1,0 +1,192 @@
+ABL American Bobtail Longhair
+ABS American Bobtail Shorthair
+ABY Abyssinian
+ACL American Curl Longhair
+ACS American Curl Shorthair
+AKE American Keuda 
+ALC Asian Leopard Cat 
+ALH Asian Longhair
+ALP Alpine Lynx 
+ALX American Lynx 
+AMB American Burmese
+AMC American Miniature Cat 
+AMS American Shorthair
+APD American Polydactyl 
+APL Aphrodite Longhair (or Shorthair)
+ARM Arabian Mau
+ASN Asian
+ASL Asian Longhair (Tiffanie)
+ASS Asian Shorthair
+AUM Australian Mist
+AWH American Wirehair
+AZT Aztek
+AZU Azul Shorthair
+AZL AZul Longhair
+BAL Balinese
+BBC Bambino Curl 
+BBO/BBN Bambino 
+BCT Bobcat 
+BEN Bengal
+BLH British Longhair
+BMB BamBob 
+BML Burmilla
+BOL Bombay Longhair
+BOM Bombay Shorthair
+BOS Bombay Shorthair
+BRA Bramble 
+BRI British Shorthair
+BRL British Longhair
+BRX Bohemian Rex
+BSH British Shorthair
+BUA American Burmese
+BUR Burmese
+BZS Brazilian Shorthair 
+CAM Cashmere (Bengal Longhair)
+CEY Ceylon
+CHA Chartreux
+CHQ Chinese Harlequin 
+CHX Chartreux
+COP Copper 
+COS Colourpoint Shorthair
+CRL Caracal 
+CRX Cornish Rex
+CSH Colorpoint Shorthair 
+CSP California Spangled 
+CTL Curly Tail Cat 
+CTO California Toyger
+CTC Chinese Tank Cat 
+CYM Cymric
+DLH Deutsche (German) Longhair
+DLX Desert Lynx 
+DOM Domestic cat, no breed
+DOS Dossow 
+DRX Devon Rex
+DSP Don Sphynx
+DWF Dwelf 
+ELF Elf 
+EUR European Shorthair
+EXO Exotic Shorthair
+FCT fishing Cat 
+FEX Foldex 
+GEN Genetta 
+GLH German Longhair
+GRX German Rex
+GTM Gao Taem 
+HAV Havana Brown (US); Suffolk (UK)
+HCL Domestic (Household) cat, longhaired
+HCS Domestic (Household) cat, shorthaired
+HFD Highland Fold 
+HLX Highland Lynx 
+HPS/HPL Household Pet Shorthair/Longhair
+JBB JungleBob 
+JBL Japanese Bobtail Longhair
+JBT Japanese Bobtail Shorthair
+JAG Jaguarundi Curl 
+JAV Javanese 
+JCL Jungle Curl 
+JCT Jungle Cat 
+JGR Jaguarette 
+JLA Jungala 
+JLX Jungle Lynx 
+KAN Kanaani
+KAS Karelian Bobtail
+KBL Kurilean Bobtail Longhair
+KBS Kurilean Bobtail Shorthair
+KKH Celtic / European Shorthair
+KKL Kinkalow 
+KMA Khao Manee
+KOR Korat
+LMK Lambkin 
+LAP LaPerm 
+LPL La Perm Longhair
+LPS La Perm Shorthair
+LYK Lykoi
+MAN Manx
+MAU Egyptian Mau
+MBT Mekong Bobtail
+MCO Maine Coon
+MDY Mandalay
+MHB Mohave Bob 
+MIL Minuet Longhair
+MIS Minuet Shorthair
+MJC Mokave Jag Cat 
+MJS Mojave Spotted 
+MKT Meerkats
+MNL Munchkin, longhaired variety
+MNS Munchkin, shorthaired variety
+MUN Munchkin 
+MSK Minksin 
+MTN Mountain Bobs 
+NAP Napoleon
+NEB Nebelung
+NBS Nebelung, shorthaired variant
+NEM Neva Masquerade
+NFO Norwegian Forest Cat
+OCI Ocicat
+OJA Ojos Azules
+OLH Oriental Longhair
+OSH Oriental Shorthair
+OWY Owyhee Bob 
+PAN Pantherette 
+PBL Pixie-Bob Longhair
+PBS Pixie-Bob Shorthair
+PEB Peterbald
+PER Persian
+POL Maine Coon Polydactyl
+PPK Puppykat 
+RAG Ragdoll
+RGM Ragamuffin
+RUF Ruffle 
+RUS Russian Shorthair
+SAF Safari 
+SAR Sashkin Rex 
+SAV Savannah
+SBI Birman LH
+SBS Birman SH (Temple Cat)
+SCS Scottish Shorthair
+SCL Scottish Longhair
+SER Serval 
+SFL Scottish Fold Longhair (Highland Fold)
+SFS Scottish Fold Shorthair
+SGT Serengeti 
+SIA Siamese
+SIB Siberian
+SIB33 Neva Masquerade
+SIN Singapura
+SKO Skookum 
+SNB Snowbob 
+SNO Snowshoe
+SOK Sokoke
+SOM Somali
+SPH Sphynx
+SRL Selkirk Rex Longhair
+SRS Selkirk Rex Shorthair
+SRX Selkirk Rex, not known if longhair or shorthair
+SYL Seychellois Longhair
+SYS Seychellois Shorthair
+THA Thai
+TIF Tiffany (not Tiffany/Chantilly extinct, or Tiffanie (ALH))
+TNB Tennessee Bobtail 
+TIG Tigri 
+TOB Toybob
+TOL Tonkinese Longhair (Tibetan)
+TOS Tonkinese Shorthair
+TOY Toyger
+TSI Trad Siamese 
+TUN Tundra 
+TRX Tennessee Rex
+TUA Turkish Angora
+TUV Turkish Van
+UKL Ukrainian Levkoy
+URL Ural Rex Longhair
+URX Ural Rex Shorthair
+VIV Viverral 
+VNW Vienna Woods 
+XHL non-recognised hairless
+XSH Shorthaired hybrid / non-recognised shorthair
+XLH Longhaired hybrid / non-recognised longhair
+YKC York Chocolate
+ORI Oriental
+NR -
+NSP -
+Autre -

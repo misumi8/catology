@@ -145,3 +145,7 @@ PredMamm
 4    100
 Name: count, dtype: int64
 
+isHairless
+0    1022
+Name: count, dtype: int64
+

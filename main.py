@@ -1,8 +1,8 @@
 import pandas as pd
 from catology import *
 
-# df = pd.read_excel('main.xlsx')
-df = pd.read_excel('wrongdata.xlsx')
+df = pd.read_excel('xlsx/main.xlsx')
+# df = pd.read_excel('xlsx/wrongdata.xlsx')
 breed_column = 'Breed'
 
 while(True):
@@ -50,9 +50,9 @@ while(True):
                 print(f"\n{suggestion_type.upper()}:")
                 print(suggestions)
         elif(command_num == 7):
-            show_hist("main.xlsx")
+            show_hist("xlsx/main.xlsx")
         elif(command_num == 8):
-            show_boxplot("main.xlsx")
+            show_boxplot("xlsx/main.xlsx")
         elif (command_num == 9):
             categorize = input("Transform categorical variables? [Y/N] ")
             if(categorize.upper() == "Y"):

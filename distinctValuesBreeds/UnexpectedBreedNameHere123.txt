@@ -1,0 +1,80 @@
+
+Breed: UnexpectedBreedNameHere123
+
+Value : Count
+Ext
+0    1
+Name: count, dtype: int64
+
+Obs
+2    1
+Name: count, dtype: int64
+
+Calm
+3    1
+Name: count, dtype: int64
+
+Afraid
+2    1
+Name: count, dtype: int64
+
+Intelligent
+4    1
+Name: count, dtype: int64
+
+Vigilant
+2.0    1
+Name: count, dtype: int64
+
+Persevering
+4    1
+Name: count, dtype: int64
+
+Affectionate
+2.0    1
+Name: count, dtype: int64
+
+Friendly
+4    1
+Name: count, dtype: int64
+
+Solitary
+3.0    1
+Name: count, dtype: int64
+
+Brutal
+2    1
+Name: count, dtype: int64
+
+Dominant
+4    1
+Name: count, dtype: int64
+
+Aggressive
+2    1
+Name: count, dtype: int64
+
+Impulsive
+4    1
+Name: count, dtype: int64
+
+Predictable
+2    1
+Name: count, dtype: int64
+
+Distracted
+3.0    1
+Name: count, dtype: int64
+
+PredBird
+0    1
+Name: count, dtype: int64
+
+PredMamm
+0.0    1
+Name: count, dtype: int64
+
+breed_encoded
+14    1
+Name: count, dtype: int64
+
