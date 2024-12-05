@@ -10,6 +10,8 @@ from fontTools.varLib.avar import mappings_from_avar
 from sklearn.model_selection import StratifiedKFold
 import pandas as pd
 
+import matplotlib.pyplot as plt
+
 def get_k_folds(k):
     df = pd.read_excel('xlsx/main.xlsx', engine='openpyxl')
     kfold = StratifiedKFold(n_splits=k, shuffle=True, random_state=1)
@@ -88,6 +90,7 @@ def update_weights(network, row, learning_rate):
 def train_network(network, train_data, learning_rate, epoch_count, outputs_count):
     # best_epoch_error = max_float
     # best_epoch_network = network
+    train_errors = []
     for i in range(epoch_count):
         sum_error = 0
         # print(train_data)
@@ -99,11 +102,23 @@ def train_network(network, train_data, learning_rate, epoch_count, outputs_count
             sum_error += sum([(expected[j] - outputs[j]) ** 2 for j in range(len(expected))])
             backward_propagate(network, expected)
             update_weights(network, row, learning_rate)
-        print(f"Epoch: {i}; Learning rate: {learning_rate}; MSE: {sum_error / len(train_data)}") # Mean Squared Error (MSE)
+            
+        mse = sum_error / len(train_data)
+        train_errors.append(mse)
+        print(f"Epoch: {i}; Learning rate: {learning_rate}; MSE: {mse}") # Mean Squared Error (MSE)
     #     if sum_error < best_epoch_error:
     #         best_epoch_error = sum_error
     #         best_epoch_network = network
     # return best_epoch_network
+
+    # Plotting the training error convergence
+    plt.plot(range(epoch_count), train_errors, label="Training Error")
+    plt.xlabel("Epoch")
+    plt.ylabel("Mean Squared Error")
+    plt.title("Training Error Convergence")
+    plt.legend()
+    plt.show()
+
 def normalize_data(data):
     data = data.drop(columns=["ID"])
     columns = data.columns
@@ -125,6 +140,36 @@ def predict(network, row):
 
 # for (a,b,c,d) in folds:
 #     print(len(a), len(b), len(c), len(d))
+
+def visualize_misclassified_points(test_data, predictions):
+    misclassified = []
+    correctly_classified = []
+
+    for i, row in enumerate(test_data.values):
+        row_features = row[:-1]
+        true_label = row[-1]
+        predicted_label = predictions[i]
+
+        if true_label != predicted_label:
+            misclassified.append(row_features)
+        else:
+            correctly_classified.append(row_features)
+
+    misclassified = np.array(misclassified)
+    correctly_classified = np.array(correctly_classified)
+
+    # Plotting misclassified and correctly classified points
+    if misclassified.shape[0] > 0:
+        plt.scatter(misclassified[:, 0], misclassified[:, 1], color='red', label='Misclassified')
+    if correctly_classified.shape[0] > 0:
+        plt.scatter(correctly_classified[:, 0], correctly_classified[:, 1], color='green', label='Correctly Classified')
+
+    plt.xlabel('Feature 1')
+    plt.ylabel('Feature 2')
+    plt.title('Misclassified vs Correctly Classified Points')
+    plt.legend()
+    plt.show()
+
 
 random.seed(30)
 k = 5
@@ -156,6 +201,9 @@ for (X_train, X_test, y_train, y_test) in folds:
         scores.append(sum(predictions) / len(predictions))
         f.write("\nAccuracy: " + str(sum(predictions) / len(predictions)))
         print(sum(predictions) / len(predictions))
+
+        visualize_misclassified_points(testing_data, [int(predict(network, row.tolist())) for row in testing_data.values])
+        
         if(x == 1):
             f.write("\nFinal score: " + str(sum(scores) / len(scores)))
         x -= 1

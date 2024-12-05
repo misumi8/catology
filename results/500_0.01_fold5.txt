@@ -656,4 +656,3 @@ Expected: 12.0 Got: 11
 Expected: 12.0 Got: 11
 Expected: 12.0 Got: 11
 Accuracy: 0.5320121951219512
-Final score: 0.5679878048780488
