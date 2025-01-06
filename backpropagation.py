@@ -220,7 +220,7 @@ for (X_train, X_test, y_train, y_test) in folds:
     output_str = ""
     n_inputs = len(X_train.values[0])
     n_outputs = len(y_train.unique())
-    network = init_network(n_inputs, (n_inputs + n_outputs) // 2, n_outputs)
+    network = init_network(n_inputs, n_inputs * 5, n_outputs)
     training_data = normalize_data(pd.concat([X_train, y_train], axis=1))
     testing_data = normalize_data(pd.concat([X_test, y_test], axis=1))
     train_network(network, training_data.values, testing_data.values, learning_rate, epoch_count, n_outputs, k - x)

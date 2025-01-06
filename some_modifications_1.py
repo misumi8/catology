@@ -8,7 +8,7 @@ r = df[df["Breed"] == "Sphynx"]
 df.loc[df["Breed"] == "Sphynx", "isHairless"] = 1
 
 # Adding new instances for breeds with lack of instances
-def addInstances(df, breed, percentage = 20):
+def addInstances(df, breed, percentage = 500):
     count = round(len(df[df["Breed"] == breed]) * percentage / 100)
     r = random.random()
     for i in range(count):
