@@ -1,14 +1,17 @@
-from fileinput import filename
+from fileinput import filename 
 from pprint import pprint
 from langdetect import detect, detect_langs
-from nltk.tokenize import word_tokenize
+from nltk.tokenize import word_tokenize, sent_tokenize
+from nltk.corpus import stopwords
 import re
 import nltk
 import matplotlib.pyplot as plt
 import seaborn as sns
+from rake_nltk import Rake
 nltk.download('punkt')
+nltk.download('stopwords')
 
-def read_file_or_keyboard(file = ""):
+def read_file_or_keyboard(file=""):
     if file:
         with open(file, "r", encoding="utf-8") as f:
             text = f.read()
@@ -25,10 +28,8 @@ def identify_lang(text):
     return language
 
 def get_stylometric_info(text):
+
     tokens = word_tokenize(text)
-    # for token in tokens:
-    #     if not (re.match(r'^[\w\-]+$', token) and not token.startswith('-') and not token.endswith('-')):
-    #         print(token)
     words = [token.lower() for token in tokens if re.match(r'^[\w\-]+$', token) and not token.startswith('-') and not token.endswith('-')]
     word_count = len(words)
     char_count_no_spaces = sum([len(word) for word in tokens])
@@ -62,6 +63,53 @@ def get_stylometric_info(text):
     plt.subplots_adjust(left=0.055, right=0.971, top=0.95, bottom=0.145)
     plt.show()
 
-text = read_file_or_keyboard("ro_test.txt")
+language_map = {
+    'ro': 'romanian',
+    'en': 'english',
+    'fr': 'french',
+    'es': 'spanish',
+}
+
+def extract_keywords_and_generate_sentences(text, detected_language):
+   
+    if detected_language not in language_map:
+        print(f"Stop-words pentru limba {detected_language} nu sunt disponibile.")
+        return
+    
+    stop_words = set(stopwords.words(language_map[detected_language]))
+
+    rake = Rake(max_length=2)  
+    rake.extract_keywords_from_text(text)
+    raw_keywords = rake.get_ranked_phrases()
+
+    # Filtrare cuvintelor cheie care sunt stop-words
+    keywords = [
+        phrase for phrase in raw_keywords
+        if not any(word.lower() in stop_words for word in phrase.split())
+    ][:10] 
+
+    print("\nExtracted Keywords:")
+    pprint(keywords)
+
+    # propoziții care conțin cuvintele cheie
+    sentences = sent_tokenize(text)
+    keyword_sentences = {}
+
+    for keyword in keywords:
+        for sentence in sentences:
+            if keyword in sentence and keyword not in keyword_sentences:
+                keyword_sentences[keyword] = sentence
+                break
+
+    print("\nGenerated Sentences for Keywords:")
+    for keyword, sentence in keyword_sentences.items():
+        print(f"Keyword: {keyword}\nSentence: {sentence}\n")
+
+# Main program
+text = read_file_or_keyboard("KR NLP/ro_test.txt")
 pprint(text)
+identify_lang(text)
 get_stylometric_info(text)
+
+detected_language = identify_lang(text)
+extract_keywords_and_generate_sentences(text, detected_language)
