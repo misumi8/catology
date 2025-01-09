@@ -190,7 +190,7 @@ def replace_words_in_file(input_file, output_file, replacement_fraction=0.2):
 
 text = read_file_or_keyboard("KR NLP/ro_test.txt")
 #print(identify_lang(text))
-#replace_words_in_file("KR NLP/ro_test.txt", "KR NLP/processed_text.txt", replacement_fraction=0.2)
+replace_words_in_file("KR NLP/ro_test.txt", "KR NLP/processed_text.txt", replacement_fraction=0.2)
 
 #pprint(text)
 language_map = {
@@ -247,11 +247,11 @@ def extract_keywords_and_generate_sentences(text, detected_language):
     # "\", ensuring that the keywords have the same meaning as they have in this sentence: \"" + sentence +
     # "\". ")
 
-text = read_file_or_keyboard("ro.txt")
+text = read_file_or_keyboard("KR NLP/ro.txt")
 pprint(text)
 identify_lang(text)
 get_stylometric_info(text)
 
 detected_language = identify_lang(text)
-extract_keywords_and_generate_sentences(text, detected_language)
+#extract_keywords_and_generate_sentences(text, detected_language)
 
