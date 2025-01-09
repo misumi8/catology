@@ -9,6 +9,7 @@ import seaborn as sns
 from nltk.corpus import wordnet
 import random
 from rodict import romanian_dict
+from googletrans import Translator
 
 nltk.download('wordnet')
 nltk.download('omw-1.4')
@@ -70,14 +71,23 @@ def get_stylometric_info(text):
     plt.show()
 
 
+translator = Translator()
+
+def translate_word(word, src_lang, dest_lang):
+    """Translate a word from src_lang to dest_lang, handling errors gracefully."""
+    try:
+        translated = translator.translate(word, src=src_lang, dest=dest_lang)
+        return translated.text if translated and translated.text else word
+    except Exception as e:
+        print(f"Error translating '{word}': {e}")
+        return word  
+
 def is_pos_compatible(lemma, pos_tag):
-    """Check if the part of speech tag matches with the lemma's part of speech."""
-    # Assuming 'a' for adjectives, 'v' for verbs, 'n' for nouns, 'r' for adverbs
     pos_map = {
-        'JJ': 'a',  # Adjective
-        'VB': 'v',  # Verb
-        'NN': 'n',  # Noun
-        'RB': 'r',  # Adverb
+        'JJ': 'a',  
+        'VB': 'v',  
+        'NN': 'n',  
+        'RB': 'r', 
     }
     
     if pos_tag in pos_map:
@@ -85,64 +95,71 @@ def is_pos_compatible(lemma, pos_tag):
     return False
 
 def get_replacements(word, pos_tag, lang):
-    """Get possible replacements for a word, depending on language (English or Romanian)."""
-    replacements = set()  # A set to store the replacement options (avoids duplicates)
+    replacements = set()
 
     if lang == "en":
-        # English-specific replacements using WordNet
         for synset in wordnet.synsets(word):
             for lemma in synset.lemmas():
-                # Add the lemma name if it's different from the input word and POS tag matches
                 if lemma.name() != word and is_pos_compatible(lemma, pos_tag):
-                    replacements.add(lemma.name().replace('_', ' '))  # Clean underscores
+                    replacements.add(lemma.name().replace('_', ' '))
 
-            # Add hypernyms (broader concepts)
             for hypernym in synset.hypernyms():
                 for lemma in hypernym.lemmas():
                     if is_pos_compatible(lemma, pos_tag):
-                        replacements.add(lemma.name().replace('_', ' '))  # Clean underscores
+                        replacements.add(lemma.name().replace('_', ' '))
 
-            # Add antonyms (negated forms)
             for lemma in synset.lemmas():
                 for antonym in lemma.antonyms():
                     if is_pos_compatible(antonym, pos_tag):
-                        # Only negate if it makes sense
-                        replacements.add("not " + antonym.name().replace('_', ' '))  # Negate antonyms
-
+                        replacements.add("not " + antonym.name().replace('_', ' '))
+    
     elif lang == "ro":
-        # Romanian-specific replacements using the custom dictionary
         if word in romanian_dict:
-            # Add synonyms
             replacements.update(romanian_dict[word]['synonyms'])
             
-            # Add negated antonyms (apply 'nu' negation)
             for antonym in romanian_dict[word]['antonyms']:
                 negated_antonym = "nu " + antonym
                 replacements.add(negated_antonym)
             
-            # Add hypernyms (broader concepts)
             replacements.update(romanian_dict[word]['hypernyms'])
 
-    # Ensure that replacements are grammatically coherent and not nonsense
+    else:
+        translated_word = translate_word(word, src_lang=lang, dest_lang="en")
+        print(f"Translated '{word}' ({lang}) to '{translated_word}' (en)")
+        
+        for synset in wordnet.synsets(translated_word):
+            for lemma in synset.lemmas():
+                if lemma.name() != translated_word and is_pos_compatible(lemma, pos_tag):
+                    replacements.add(lemma.name().replace('_', ' '))
+
+            for hypernym in synset.hypernyms():
+                for lemma in hypernym.lemmas():
+                    if is_pos_compatible(lemma, pos_tag):
+                        replacements.add(lemma.name().replace('_', ' '))
+
+            for lemma in synset.lemmas():
+                for antonym in lemma.antonyms():
+                    if is_pos_compatible(antonym, pos_tag):
+                        replacements.add("not " + antonym.name().replace('_', ' '))
+
+        replacements = {translate_word(replacement, src_lang="en", dest_lang=lang) for replacement in replacements}
+
     return replacements
 
 def replace_words(text, replacement_fraction=0.2):
-    """Replace at least a fraction of the words in the text."""
     words = nltk.word_tokenize(text)
     pos_tags = nltk.pos_tag(words)
     num_to_replace = max(1, int(len(words) * replacement_fraction))
     lang = identify_lang(text)
     
-    # Shuffle indices to pick random words to replace
     indices = list(range(len(words)))
     random.shuffle(indices)
 
-    replaced = set()  # Keep track of indices already replaced
+    replaced = set()
     for idx in indices:
         word = words[idx]
-        pos_tag = pos_tags[idx][1]  # POS tag of the word
+        pos_tag = pos_tags[idx][1]
         
-        # Skip if the word has already been replaced or is not alphanumeric
         if idx in replaced or not word.isalpha():
             continue
         
@@ -153,14 +170,12 @@ def replace_words(text, replacement_fraction=0.2):
             words[idx] = replacement
             replaced.add(idx)
 
-        # Stop if we've replaced enough words
         if len(replaced) >= num_to_replace:
             break
 
     return ' '.join(words)
 
 def replace_words_in_file(input_file, output_file, replacement_fraction=0.2):
-    """Replace words in a file and write the result to another file."""
     original_text = read_file_or_keyboard(input_file)
     alternative_text = replace_words(original_text, replacement_fraction)
 
@@ -173,9 +188,9 @@ def replace_words_in_file(input_file, output_file, replacement_fraction=0.2):
     print(f"Processed text saved to {output_file}")
 
 text = read_file_or_keyboard("KR NLP/ro_test.txt")
-print(identify_lang(text))
-replace_words_in_file("KR NLP/ro_test.txt", "KR NLP/processed_text.txt", replacement_fraction=0.2)
+#print(identify_lang(text))
+#replace_words_in_file("KR NLP/ro_test.txt", "KR NLP/processed_text.txt", replacement_fraction=0.2)
 
 #pprint(text)
-#get_stylometric_info(text)
+get_stylometric_info(text)
 
