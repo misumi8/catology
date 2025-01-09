@@ -1,4 +1,4 @@
-from fileinput import filename 
+from http.client import responses
 from pprint import pprint
 from langdetect import detect, detect_langs
 from nltk.tokenize import word_tokenize, sent_tokenize
@@ -6,8 +6,8 @@ from nltk.corpus import stopwords
 import re
 import nltk
 import matplotlib.pyplot as plt
-import seaborn as sns
 from rake_nltk import Rake
+import google.generativeai as genai
 nltk.download('punkt')
 nltk.download('stopwords')
 
@@ -28,7 +28,6 @@ def identify_lang(text):
     return language
 
 def get_stylometric_info(text):
-
     tokens = word_tokenize(text)
     words = [token.lower() for token in tokens if re.match(r'^[\w\-]+$', token) and not token.startswith('-') and not token.endswith('-')]
     word_count = len(words)
@@ -51,7 +50,7 @@ def get_stylometric_info(text):
         f.write(text + "\n\n")
         for freq in word_frequency:
             if freq in words:
-                frequency = str(freq) + ": " + str(word_frequency[freq]) + "(" + str(round((word_frequency[freq] / word_count) * 100, 2)) + "%)"
+                frequency = str(freq) + ": " + str(word_frequency[freq]) + " (" + str(round((word_frequency[freq] / word_count) * 100, 2)) + "%)"
                 print(f"\t{frequency}")
                 f.write(f"{frequency}\n")
     plt.figure(figsize=(10, 6))
@@ -71,18 +70,18 @@ language_map = {
 }
 
 def extract_keywords_and_generate_sentences(text, detected_language):
-   
     if detected_language not in language_map:
-        print(f"Stop-words pentru limba {detected_language} nu sunt disponibile.")
+        print(f"Stop-words for language {detected_language} are not available.")
         return
     
     stop_words = set(stopwords.words(language_map[detected_language]))
 
-    rake = Rake(max_length=2)  
+    rake = Rake() # max_length=2
     rake.extract_keywords_from_text(text)
     raw_keywords = rake.get_ranked_phrases()
 
-    # Filtrare cuvintelor cheie care sunt stop-words
+    # Filtering keywords that are stop-words
+    # Stop words - commonly used words that don't offer too much useful information
     keywords = [
         phrase for phrase in raw_keywords
         if not any(word.lower() in stop_words for word in phrase.split())
@@ -91,7 +90,7 @@ def extract_keywords_and_generate_sentences(text, detected_language):
     print("\nExtracted Keywords:")
     pprint(keywords)
 
-    # propoziții care conțin cuvintele cheie
+    # Sentences that contain the keywords
     sentences = sent_tokenize(text)
     keyword_sentences = {}
 
@@ -101,12 +100,23 @@ def extract_keywords_and_generate_sentences(text, detected_language):
                 keyword_sentences[keyword] = sentence
                 break
 
-    print("\nGenerated Sentences for Keywords:")
-    for keyword, sentence in keyword_sentences.items():
-        print(f"Keyword: {keyword}\nSentence: {sentence}\n")
+    with open("A://gemini_api_key.txt", "r") as f:
+        API_KEY = f.read()
+    genai.configure(api_key=API_KEY)
+    model = genai.GenerativeModel('gemini-1.5-flash')
 
-# Main program
-text = read_file_or_keyboard("KR NLP/ro_test.txt")
+    for keyword, sentence in keyword_sentences.items():
+        response = model.generate_content("Generate a single sentence in " + language_map[detected_language] + " that includes the following keywords: \"" + keyword +
+                                          "\", ensuring that the keywords have the same meaning as they have in this sentence: \"" + sentence +
+                                          "\". ")
+        print(f"Keyword: {keyword}\nOriginal sentence: {sentence}\nGenerated sentence: {response.text}")
+
+    # print("Generate a single sentence in " + language_map[
+    #     detected_language] + " that includes the following keywords: \"" + keyword +
+    # "\", ensuring that the keywords have the same meaning as they have in this sentence: \"" + sentence +
+    # "\". ")
+
+text = read_file_or_keyboard("ro.txt")
 pprint(text)
 identify_lang(text)
 get_stylometric_info(text)
