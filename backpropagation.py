@@ -1,16 +1,14 @@
+import json
 import time
-from idlelib.iomenu import errors
-from math import exp
 import numpy as np
-import pandas as pd
 import random
-from fontTools.varLib.avar import mappings_from_avar
 from sklearn.model_selection import StratifiedKFold
 import pandas as pd
 import matplotlib.pyplot as plt
+from sklearn.preprocessing import MinMaxScaler, LabelEncoder
 
 def get_k_folds(k):
-    df = pd.read_excel('xlsx/main.xlsx', engine='openpyxl')
+    df = pd.read_excel('xlsx/new_main.xlsx', engine='openpyxl')
     kfold = StratifiedKFold(n_splits=k, shuffle=True, random_state=1)
     X = df.drop(columns=["Breed"])
     y = df["Breed"]
@@ -21,15 +19,15 @@ def get_k_folds(k):
         folds.append((X_train, X_test, y_train, y_test))
     return folds
 
+def init_layer(n_neurons, n_inputs):
+    return [{"weights": np.random.uniform(-1, 1, n_inputs + 1).tolist()} for n in range(n_neurons)]
+
 def init_network(input_size, hidden_size, output_size):
-    network = []
-    hidden_layer = [{"weights": [random.uniform(-1,1) for i in range(input_size + 1)]} for i in range(hidden_size)]
-    output_layer = [{"weights": [random.uniform(-1,1) for i in range(hidden_size + 1)]} for i in range(output_size)]
-    network.append(hidden_layer)
-    network.append(output_layer)
-    return network
+    return [init_layer(hidden_size, input_size), init_layer(output_size, hidden_size)]
 
 def activate_neuron(weights, inputs):
+    # print(weights[:-1], end="\n____________________\n")
+    # print(inputs)
     return np.dot(weights[:-1], inputs) + weights[-1]
     # activation = weights[-1] # We assume that bias is the last weight
     # for i in range(len(weights) - 1):
@@ -37,12 +35,12 @@ def activate_neuron(weights, inputs):
     # return activation
 
 # Non-linear activation function
-def sigmoid(z): # ReLu try
-    # print(1 / (1 + exp(-z)), end = "\n------\n")
-    return 1 / (1 + exp(-z))
+def sigmoid(z):
+    return 1 / (1 + np.exp(-z))
 
 def forward_propagate(network, row):
     inputs = row
+    # print([i for i in row if i > 1])
     for layer in network:
         new_inputs = []
         for neuron in layer:
@@ -85,86 +83,72 @@ def update_weights(network, row, learning_rate):
             neuron["weights"][-1] -= learning_rate * neuron["delta"]
 
 def train_network(network, train_data, test_data, learning_rate, epoch_count, outputs_count, fold_ord):
-    # best_epoch_error = max_float
-    # best_epoch_network = network
-    train_errors = []
-    test_errors = []
-    mean_train_errors = []
-    mean_test_errors = []
-    for i in range(epoch_count):
-        sum_error_train = 0
-        sum_error_test = 0
-        wrong_predictions_train = 0
-        wrong_predictions_test = 0
-        # print(train_data)
+    best_network = None
+    best_test_error = float("inf")
+    train_errors, test_errors = [], []
+
+    for epoch in range(epoch_count):
+        sum_error_train, sum_error_test = 0, 0
+        wrong_predictions_train, wrong_predictions_test = 0, 0
+
         for row in train_data:
-            row = row.tolist()
-            outputs = forward_propagate(network, row)
-            expected = [0 for k in range(outputs_count)]
-            # print(int(row[-1]))
+            row = np.around(row, decimals=4).tolist()
+            outputs = forward_propagate(network, row[:-1])
+            expected = [0] * outputs_count
             expected[int(row[-1]) - 1] = 1
-            sum_error_train += sum([(expected[j] - outputs[j]) ** 2 for j in range(len(expected))])
+
+            sum_error_train += sum((expected[j] - outputs[j]) ** 2 for j in range(outputs_count))
             backward_propagate(network, expected)
             update_weights(network, row, learning_rate)
+
             if (int(row[-1]) - 1) != outputs.index(max(outputs)):
                 wrong_predictions_train += 1
-        mse_train = sum_error_train / len(train_data)
-        train_errors.append(mse_train)
-        mean_train_errors.append(wrong_predictions_train / len(train_data))
 
-        # testing network on test_data
         for row in test_data:
-            row = row.tolist()
-            outputs = forward_propagate(network, row)
-            expected = [0 for l in range(outputs_count)]
+            row = np.around(row, decimals=4).tolist()
+            outputs = forward_propagate(network, row[:-1])
+            expected = [0] * outputs_count
             expected[int(row[-1]) - 1] = 1
-            sum_error_test += sum([(expected[j] - outputs[j]) ** 2 for j in range(len(expected))])
+
+            sum_error_test += sum((expected[j] - outputs[j]) ** 2 for j in range(outputs_count))
             if (int(row[-1]) - 1) != outputs.index(max(outputs)):
                 wrong_predictions_test += 1
+
+        mse_train = sum_error_train / len(train_data)
         mse_test = sum_error_test / len(test_data)
+        train_errors.append(mse_train)
         test_errors.append(mse_test)
-        mean_test_errors.append(wrong_predictions_test / len(test_data))
-        print(f"Epoch: {i}; Learning rate: {learning_rate}; MSE_train: {mse_train}; MSE_test: {mse_test}") # Mean Squared Error (MSE)
-    #     if sum_error < best_epoch_error:
-    #         best_epoch_error = sum_error
-    #         best_epoch_network = network
-    # return best_epoch_network
 
-    # Plotting the training error convergence
-    plt.plot(range(epoch_count), train_errors, label="Training Error", color="limegreen")
-    plt.plot(range(epoch_count), test_errors, label="Testing Error", color="cornflowerblue")
+        # Early stopping
+        if mse_test < best_test_error:
+            best_test_error = mse_test
+            best_network = [layer.copy() for layer in network]
+
+        print(f"Epoch {epoch + 1}/{epoch_count}, Train Error: {(wrong_predictions_train/len(train_data)):.4f}, Test Error: {(wrong_predictions_test/len(test_data)):.4f}")
+
+    # MSE training and testing plot
+    plt.plot(range(epoch_count), train_errors, label="Train Error", color="limegreen")
+    plt.plot(range(epoch_count), test_errors, label="Test Error", color="blue")
     plt.xlabel("Epoch")
-    plt.ylabel("Mean Squared Error")
-    # plt.title("Training Error Convergence")
+    plt.ylabel("MSE")
     plt.legend()
-    plt.grid(True)
-    # plt.show()
-    plt.savefig("plots/mse/" + str(epoch_count) + "_" + str(learning_rate) + "_fold" + str(fold_ord) + ".png", dpi=300, bbox_inches='tight')
+    plt.grid()
+    plt.savefig(f"plots/MSE_{str(epoch_count)}_{str(learning_rate)}_fold{str(k - x)}.png", dpi=300)
     plt.close()
 
-    plt.plot(range(epoch_count), mean_train_errors, label="Training Error", color="limegreen")
-    plt.plot(range(epoch_count), mean_test_errors, label="Testing Error", color="cornflowerblue")
-    plt.xlabel("Epoch")
-    plt.ylabel("Mean Error")
-    plt.legend()
-    plt.grid(True)
-    plt.savefig("plots/mean_err/" + str(epoch_count) + "_" + str(learning_rate) + "_fold" + str(fold_ord) + ".png", dpi=300, bbox_inches='tight')
-    plt.close()
+    return best_network
 
 def normalize_data(data):
-    data = data.drop(columns=["ID"])
-    columns = data.columns
-    for column in columns:
-        content = data[column].unique()
-        mapping = {k: (v / (len(content) - 1)) for v, k in enumerate(sorted(content))}  # (i / (len(breeds) - 1))
-        data[column] = data[column].map(mapping)
-        # if(column == "PredBird"):
-        #     print(sorted(content), "\n", mapping)
-    breeds = data["Breed"].unique()
-    mapping = {breed: i + 1 for i, breed in enumerate(breeds)} # (i / (len(breeds) - 1))
-    data["Breed"] = data["Breed"].map(mapping)
-    print(data)
+    numeric_columns = data.select_dtypes(include=[np.number]).columns
+    scaler = MinMaxScaler()
+    data[numeric_columns] = scaler.fit_transform(data[numeric_columns])
+
+    if "Breed" in data.columns:
+        label_encoder = LabelEncoder()
+        data["Breed"] = label_encoder.fit_transform(data["Breed"]) + 1
+
     return data
+
 
 def predict(network, row):
     outputs = forward_propagate(network, row)
@@ -202,75 +186,89 @@ def predict(network, row):
 #     plt.legend()
 #     plt.show()
 
-random.seed(60)
-k = 5
-learning_rate = 0.01
-epoch_count = 500
+if __name__ == "__main__":
+    random.seed(60) #60
+    k = 15
+    learning_rate = 0.01
+    epoch_count = 1000
 
-start = time.time()
-folds = get_k_folds(k)
-scores = []
-x = k - 1
+    start = time.time()
+    folds = get_k_folds(k)
+    scores = []
+    x = k - 1
 
-df = pd.read_excel('xlsx/main.xlsx', engine='openpyxl')
-unique_breeds = df["Breed"].unique()
-breed_ids = {breed: i for i, breed in enumerate(unique_breeds)}
+    df = pd.read_excel('xlsx/new_main.xlsx', engine='openpyxl')
+    unique_breeds = df["Breed"].unique()
+    breed_ids = {breed: i for i, breed in enumerate(unique_breeds)}
 
-for (X_train, X_test, y_train, y_test) in folds:
-    output_str = ""
-    n_inputs = len(X_train.values[0])
-    n_outputs = len(y_train.unique())
-    network = init_network(n_inputs, n_inputs * 5, n_outputs)
-    training_data = normalize_data(pd.concat([X_train, y_train], axis=1))
-    testing_data = normalize_data(pd.concat([X_test, y_test], axis=1))
-    train_network(network, training_data.values, testing_data.values, learning_rate, epoch_count, n_outputs, k - x)
+    for (X_train, X_test, y_train, y_test) in folds:
+        output_str = ""
+        n_inputs = len(X_train.values[0])
+        n_outputs = len(y_train.unique())
+        network = init_network(n_inputs, int((n_inputs + n_outputs) / 2) * 4 + 1 , n_outputs)
+        training_data = normalize_data(pd.concat([X_train, y_train], axis=1))
+        testing_data = normalize_data(pd.concat([X_test, y_test], axis=1))
+        best_network = train_network(network, training_data.values, testing_data.values, learning_rate, epoch_count, n_outputs, k - x)
 
-    predictions = []
-    breeds = testing_data["Breed"].unique()
-    # breeds_count = len(testing_data["Breed"].unique())
-    each_breed_misc_count = [0 for i in range(len(breeds))]
-    for row in testing_data.values:
-        row = row.tolist()
-        prediction = predict(network, row)
-        # print(prediction)
-        predictions.append(prediction == (int(row[-1])))
-        if prediction != (int(row[-1])):
-            each_breed_misc_count[int(row[-1]) - 1] += 1
-        output_str += "Expected: " + str(row[-1]) + " Got: " + str(prediction) + "\n"
-    scores.append(sum(predictions) / len(predictions))
-    output_str += "\nAccuracy: " + str(sum(predictions) / len(predictions))
-    print(sum(predictions) / len(predictions))
+        predictions = []
+        breeds = testing_data["Breed"].unique()
+        # breeds_count = len(testing_data["Breed"].unique())
+        each_breed_misc_count = [0 for i in range(len(breeds))]
+        for row in testing_data.values:
+            row = np.around(row, decimals=4).tolist()
+            prediction = predict(network, row[:-1])
+            # print(prediction)
+            predictions.append(prediction == (int(row[-1])))
+            if prediction != (int(row[-1])):
+                each_breed_misc_count[int(row[-1]) - 1] += 1
+            output_str += "Expected: " + str(row[-1]) + " Got: " + str(prediction) + "\n"
+        scores.append(sum(predictions) / len(predictions))
+        output_str += "\nAccuracy: " + str(sum(predictions) / len(predictions))
+        print(sum(predictions) / len(predictions))
 
-    breed_counts = testing_data["Breed"].value_counts(sort=False)
-    sorted_counts = breed_counts.sort_index()
-    # print("each_breed_misc_count:", each_breed_misc_count)
-    # print("breed_counts:", breed_counts)
-    # print("sorted_counts:", sorted_counts)
-    for br in range(len(each_breed_misc_count)):
-        each_breed_misc_count[br] /= breed_counts.iloc[br]
-    breed_ids_sorted = sorted(breed_ids.items(), key=lambda w: w[1])
+        breed_counts = testing_data["Breed"].value_counts(sort=False)
+        sorted_counts = breed_counts.sort_index()
+        # print("each_breed_misc_count:", each_breed_misc_count)
+        # print("breed_counts:", breed_counts)
+        # print("sorted_counts:", sorted_counts)
+        for br in range(len(each_breed_misc_count)):
+            each_breed_misc_count[br] /= breed_counts.iloc[br]
+        breed_ids_sorted = sorted(breed_ids.items(), key=lambda w: w[1])
 
-    plt.figure(figsize=(12, 6))
-    plt.bar([key for key, value in breed_ids_sorted], each_breed_misc_count, color='skyblue', edgecolor='black', alpha=0.8)
-    plt.xlabel('Breeds')
-    plt.ylabel('Error rate')
-    plt.xticks(rotation=45)
-    plt.grid(axis='y', linestyle='--', alpha=0.7)
-    plt.tight_layout()
-    plt.savefig("plots/" + str(epoch_count) + "_" + str(learning_rate) + "_fold" + str(k - x) + ".png", dpi=300, bbox_inches='tight')
-    plt.close()
+        plt.figure(figsize=(12, 6))
+        plt.bar([key for key, value in breed_ids_sorted], each_breed_misc_count, color='skyblue', edgecolor='black', alpha=0.8)
+        plt.xlabel('Breeds')
+        plt.ylabel('Error rate')
+        plt.xticks(rotation=45)
+        plt.grid(axis='y', linestyle='--', alpha=0.7)
+        plt.tight_layout()
+        plt.savefig("plots/" + str(epoch_count) + "_" + str(learning_rate) + "_fold" + str(k - x) + ".png", dpi=300, bbox_inches='tight')
+        plt.close()
 
-    # Save results
-    with open("results/" + str(epoch_count) + "_" + str(learning_rate) + "_fold" + str(k - x) + ".txt", "w") as f:
-        f.write(output_str)
-        if(x == 0):
-            f.write("\nFinal score: " + str(sum(scores) / len(scores)))
-        x -= 1
+        # Save results
+        with open("results/" + str(epoch_count) + "_" + str(learning_rate) + "_fold" + str(k - x) + ".txt", "w") as f:
+            f.write(output_str)
+            if(x == 0):
+                f.write("\nFinal score: " + str(sum(scores) / len(scores)))
+            x -= 1
 
-print(sum(scores) / len(scores))
+        data = {
+            "score": str(sum(scores) / len(scores)),
+            "input_layer_size": n_inputs,
+            "hidden_layer_size": int((n_inputs + n_outputs) / 2) * 4 + 1 ,
+            "output_layer_size": n_outputs,
+            "weights": {
+                "input_to_hidden": best_network[0],
+                "hidden_to_output": best_network[1]
+            }
+        }
 
-print("Done")
-end = time.time()
-print(f"Execution time: {end -  start}")
+        with open("results/networks/" + str(epoch_count) + "_" + str(learning_rate) + ".json", "w") as jf:
+            json.dump(data, jf, indent=4)
+
+    print(sum(scores) / len(scores))
+
+    end = time.time()
+    print(f"Execution time: {end -  start}")
 
 
